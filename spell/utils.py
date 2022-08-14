@@ -1,5 +1,1 @@
-from pathlib import Path
-
-
-def read_file(file: Path) -> str:
-    return file.read_text()
+"""This file intended for utility functions"""
