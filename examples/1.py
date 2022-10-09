@@ -167,7 +167,10 @@ class ArgTypeExpander:
                 from mypy.subtypes import is_subtype
 
                 if is_subtype(actual_type, self.context.iterable_type):
-                    return map_instance_to_supertype(actual_type, self.context.iterable_type.type,).args[0]
+                    return map_instance_to_supertype(
+                        actual_type,
+                        self.context.iterable_type.type,
+                    ).args[0]
                 else:
                     # We cannot properly unpack anything other
                     # than `Iterable` type with `*`.
@@ -203,7 +206,10 @@ class ArgTypeExpander:
             ):
                 # Only `Mapping` type can be unpacked with `**`.
                 # Other types will produce an error somewhere else.
-                return map_instance_to_supertype(actual_type, self.context.mapping_type.type,).args[1]
+                return map_instance_to_supertype(
+                    actual_type,
+                    self.context.mapping_type.type,
+                ).args[1]
             else:
                 return AnyType(TypeOfAny.from_error)
         else:
