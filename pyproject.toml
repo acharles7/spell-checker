@@ -1,6 +1,19 @@
+[project]
+name = "spell-checker"
+version = "0.0.2"
+authors = [
+    {name = "Charles Patel", email = "charlespatel007@yahoo.com"},
+]
+description = "A typo checker in docstrings and inline comments"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+spell = "spell.main:main"
+
 [tool.black]
 line-length = 110
-target_version = ['py38']
+target_version = ["py38"]
 include = '\.pyi?$'
 exclude = '''
 
@@ -17,13 +30,13 @@ exclude = '''
 '''
 
 [tool.isort]
-profile = 'black'
+profile = "black"
 line_length = 110
 combine_as_imports = true
-multi_line_output = 'VERTICAL_HANGING_INDENT'
+multi_line_output = "VERTICAL_HANGING_INDENT"
 
 [tool.mypy]
-python_version = '3.10'
+python_version = "3.10"
 namespace_packages = true
 warn_unused_configs = true
 warn_redundant_casts = true
