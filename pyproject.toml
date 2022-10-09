@@ -8,6 +8,9 @@ description = "A typo checker in docstrings and inline comments"
 readme = "README.md"
 requires-python = ">=3.10"
 
+[project.scripts]
+spell = "spell.main:main"
+
 [tool.black]
 line-length = 110
 target_version = ["py38"]
