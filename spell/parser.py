@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
+EXAMPLE_DIR = Path.cwd().parent / "examples" / "2.py"
 
 
 @dataclass
@@ -114,7 +114,7 @@ class FileParser:
 def main() -> None:
     parser = FileParser(EXAMPLE_DIR)
     parser.parse()
-    # parser.find_docstrings(verbose=True)
+    parser.find_docstrings(verbose=True)
     for comment in parser.find_inline_comments():
         print(comment)
         print(comment.clean())
