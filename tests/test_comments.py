@@ -1,33 +1,75 @@
 from pathlib import Path
-from spell.parser import FileParser, BaseComment
+from unittest import TestCase
+
+from spell.parser import BaseComment, BaseDocstring, DocstringMetadata, FileParser
 
 
-def test_inline_comments():
-    file = Path.cwd() / "data" / "file1.py"
+class TestInlineComments(TestCase):
+
+    file = Path(__file__).parent / "data" / "file1.py"
     parser = FileParser(file)
     parser.parse()
 
     actual_comments = parser.find_inline_comments()
-    expected_comments = [
-        BaseComment(comment='        # If string integer, then convert to integer', line_no=16),
-        BaseComment(comment='        # if list, then convert it to string and then integer', line_no=19),
-        BaseComment(comment='        # if no str, list, then debug the input', line_no=22),
-    ]
-    for a, b in zip(actual_comments, expected_comments):
-        assert a.comment == b.comment
 
-    expected_comments_cleaned = [
-        BaseComment(comment='# If string integer, then convert to integer', line_no=16),
-        BaseComment(comment='# if list, then convert it to string and then integer', line_no=19),
-        BaseComment(comment='# if no str, list, then debug the input', line_no=22),
-    ]
-    for a, b in zip(actual_comments, expected_comments_cleaned):
-        assert a.clean() == b
+    def test_inline_comments(self) -> None:
+        expected_comments = [
+            BaseComment(comment="        # If string integer, then convert to integer", line_no=18),
+            BaseComment(comment="        # if list, then convert it to string and then integer", line_no=21),
+            BaseComment(comment="        # if no str, list, then try to cast it to int", line_no=24),
+        ]
+        for a, b in zip(self.actual_comments, expected_comments):
+            assert a.comment == b.comment
 
-    expected_comments_stripped = [
-        BaseComment(comment='If string integer, then convert to integer', line_no=16),
-        BaseComment(comment='if list, then convert it to string and then integer', line_no=19),
-        BaseComment(comment='if no str, list, then debug the input', line_no=22),
-    ]
-    for a, b in zip(actual_comments, expected_comments_stripped):
-        assert a.clean(strip_hash=True) == b
+    def test_inline_comments_cleaned(self) -> None:
+        expected_comments = [
+            BaseComment(comment="# If string integer, then convert to integer", line_no=18),
+            BaseComment(comment="# if list, then convert it to string and then integer", line_no=21),
+            BaseComment(comment="# if no str, list, then try to cast it to int", line_no=24),
+        ]
+        for a, b in zip(self.actual_comments, expected_comments):
+            assert a.clean() == b
+
+    def test_inline_comments_stripped(self) -> None:
+        expected_comments = [
+            BaseComment(comment="If string integer, then convert to integer", line_no=18),
+            BaseComment(comment="if list, then convert it to string and then integer", line_no=21),
+            BaseComment(comment="if no str, list, then try to cast it to int", line_no=24),
+        ]
+        for a, b in zip(self.actual_comments, expected_comments):
+            assert a.clean(strip_hash=True) == b
+
+
+class TestDocstrings(TestCase):
+
+    file = Path(__file__).parent / "data" / "file1.py"
+    parser = FileParser(file)
+    parser.parse()
+
+    actual_docstrings = parser.find_docstrings()
+
+    def test_docstrings(self) -> None:
+        expected_docstrings = [
+            BaseDocstring(
+                docstring="A python test file",
+                metadata=DocstringMetadata(cls_name=None, line_no=None, end_line_no=None, col_offset=None),
+            ),
+            BaseDocstring(
+                docstring="Returns 'hello'",
+                metadata=DocstringMetadata(cls_name="hello", line_no=6, end_line_no=6, col_offset=4),
+            ),
+            BaseDocstring(
+                docstring="A class represents foo and bar",
+                metadata=DocstringMetadata(cls_name="Converter", line_no=11, end_line_no=11, col_offset=4),
+            ),
+            BaseDocstring(
+                docstring=None,
+                metadata=DocstringMetadata(cls_name=None, line_no=None, end_line_no=None, col_offset=None),
+            ),
+            BaseDocstring(
+                docstring="Converts to integer representation",
+                metadata=DocstringMetadata(cls_name="convert", line_no=17, end_line_no=17, col_offset=8),
+            ),
+        ]
+        for a, b in zip(self.actual_docstrings, expected_docstrings):
+            assert a == b

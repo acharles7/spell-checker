@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-EXAMPLE_DIR = Path.cwd().parent / "examples" / "2.py"
+EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
 
 
 @dataclass
@@ -19,9 +19,9 @@ class BaseComment:
 
         _comment: str = self.comment.strip()
         if strip_hash:
-            _comment = _comment.strip("#")
+            _comment = _comment.strip("#").strip()
 
-        return BaseComment(comment=_comment.strip(), line_no=self.line_no)
+        return BaseComment(comment=_comment, line_no=self.line_no)
 
     def remove_symbols(self) -> "BaseComment":
         raise NotImplementedError("Not implemented")
@@ -39,6 +39,7 @@ class DocstringMetadata:
 class BaseDocstring:
     docstring: str | None
     metadata: DocstringMetadata | None
+    # TODO: Add identifier to identify where docstring came from i.e. Enum.Module, Enum.Function etc.
 
 
 class FileParser:
