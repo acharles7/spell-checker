@@ -2,16 +2,44 @@
 
 import ast
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, NewType
 
-EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
+# EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
+EXAMPLE_DIR = Path.cwd().parent / "tests" / "data" / "file1.py"
+
+
+Comment = NewType("Comment", str)
+Docstring = NewType("Docstring", str)
+
+
+class Type(Enum):
+    """Type of comments in a python file"""
+
+    #: Inline comments starts with '#'
+    INLINE = "INLINE"
+
+    #: Docstring of module, class, or function
+    DOCSTRING = "DOCSTRING"
+
+
+class CommentType(Enum):
+
+    INLINE = "inline"
+
+    CLASS = "class"
+
+    MODULE = "module"
+
+    FUNCTION = "function"
 
 
 @dataclass
 class BaseComment:
     comment: str | None
     line_no: int
+    _type: CommentType = CommentType.INLINE
 
     def clean(self, strip_hash: bool = False) -> "BaseComment":
         if not self.comment:
@@ -39,6 +67,7 @@ class DocstringMetadata:
 class BaseDocstring:
     docstring: str | None
     metadata: DocstringMetadata | None
+    _type: CommentType
     # TODO: Add identifier to identify where docstring came from i.e. Enum.Module, Enum.Function etc.
 
 
@@ -75,7 +104,22 @@ class FileParser:
             end_line_no: int | None = None
             col_offset: int | None = None
             # end_col_offset: int | None = None
+            _type: CommentType
             docstring: str | None = ast.get_docstring(cls)
+
+            # if no docstring found then ignore it
+            if not docstring:
+                continue
+
+            match cls:
+                case ast.Module():
+                    _type = CommentType.MODULE
+                case ast.ClassDef():
+                    _type = CommentType.CLASS
+                case ast.FunctionDef() | ast.AsyncFunctionDef():
+                    _type = CommentType.FUNCTION
+                case _:
+                    raise Exception(f"Unhandled class found: {cls}")
 
             if not isinstance(cls, ast.Module):
                 for node in cls.body:
@@ -89,13 +133,14 @@ class FileParser:
             metadata = DocstringMetadata(
                 cls_name=name, line_no=line_no, end_line_no=end_line_no, col_offset=col_offset
             )
-            docstrings.append(ds := BaseDocstring(docstring=docstring, metadata=metadata))
+            docstrings.append(ds := BaseDocstring(docstring=docstring, metadata=metadata, _type=_type))
 
             if verbose:
                 print("-" * 100)
                 print(f"class: {ast.dump(cls)}", end="\n\n")
                 print(ds.metadata, end="\n\n")
                 print(ds.docstring)
+                print(ds._type)
                 print("-" * 100, end="\n\n")
 
         return docstrings
@@ -115,7 +160,9 @@ class FileParser:
 def main() -> None:
     parser = FileParser(EXAMPLE_DIR)
     parser.parse()
-    parser.find_docstrings(verbose=True)
+    ds = parser.find_docstrings(verbose=True)
+    # for d in ds:
+    #     print(d)
     for comment in parser.find_inline_comments():
         print(comment)
         print(comment.clean())
