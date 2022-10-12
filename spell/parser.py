@@ -161,8 +161,8 @@ def main() -> None:
     parser = FileParser(EXAMPLE_DIR)
     parser.parse()
     ds = parser.find_docstrings(verbose=True)
-    # for d in ds:
-    #     print(d)
+    for d in ds:
+        print(d)
     for comment in parser.find_inline_comments():
         print(comment)
         print(comment.clean())
