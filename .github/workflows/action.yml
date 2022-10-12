@@ -30,5 +30,11 @@ jobs:
     - name: mypy
       run: |
         mypy -p spell
+    - name: isort
+      run: |
+        isort --check .
+    - name: black
+      run: |
+        black --check .
         
         

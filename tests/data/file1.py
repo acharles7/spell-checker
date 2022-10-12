@@ -15,12 +15,12 @@ class Converter:
 
     def convert(self) -> int:
         """Converts to integer representation"""
-        # If string integer, then convert to integer
+        # convert str to int
         if isinstance(self.v, str):
             return int(self.v)
-        # if list, then convert it to string and then integer
+        # convert to str & then int
         elif isinstance(self.v, list):
             return int("".join([str(v) for v in self.v]))
-        # if no str, list, then try to cast it to int
+        # try to cast to int
         else:
             return int(self.v)
