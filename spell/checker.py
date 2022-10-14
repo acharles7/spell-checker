@@ -45,9 +45,11 @@ def find_paths(paths: list[Path]) -> Generator[Path, None, None]:
             pass
 
 
+@dataclass
 class Walker:
-    def __init__(self, config: Config):
-        self._config = config
+    """A walker class to walk through project directories and fetch required paths"""
+
+    config: Config
 
     def walk(self) -> list[Path]:
-        return [path for path in find_paths(self._config.paths)]
+        return [path for path in find_paths(self.config.paths)]

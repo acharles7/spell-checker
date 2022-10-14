@@ -54,6 +54,10 @@ class BaseComment:
     def remove_symbols(self) -> "BaseComment":
         raise NotImplementedError("Not implemented")
 
+    def is_code(self) -> bool:
+        """Returns True if commented line is python code"""
+        raise NotImplementedError("Not implemented")
+
 
 @dataclass
 class DocstringMetadata:

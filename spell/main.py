@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from spell.checker import Config, Walker
+from spell.parser import FileParser
 
 
 def main() -> None:
@@ -32,6 +33,20 @@ def main() -> None:
     walker = Walker(config)
     paths = walker.walk()
     print(paths)
+
+    for path in paths:
+        print(f"{path.name} : {'+' * 80}")
+        file_parser = FileParser(path)
+        file_parser.parse()
+
+        doc_strs = file_parser.find_docstrings(verbose=False)
+        comments = file_parser.find_inline_comments()
+
+        for c in comments:
+            print(c.clean(strip_hash=True))
+
+        for d in doc_strs:
+            print(d)
 
 
 if __name__ == "__main__":
