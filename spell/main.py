@@ -3,8 +3,9 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-from spell.checker import Config, Walker
+from spell.config import Config
 from spell.parser import FileParser
+from spell.walker import Walker
 
 
 def main() -> None:
@@ -35,7 +36,7 @@ def main() -> None:
     print(paths)
 
     for path in paths:
-        print(f"{path.name} : {'+' * 80}")
+        print(f"{path.name} : {'+' * 180}")
         file_parser = FileParser(path)
         file_parser.parse()
 
