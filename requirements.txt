@@ -1,5 +1,0 @@
-# Include the development-environment dependencies
--r requirements-dev.txt
-
-# All other dependencies should be pinned within setup.py
--e .
