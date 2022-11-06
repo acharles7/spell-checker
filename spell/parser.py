@@ -2,43 +2,20 @@
 
 import ast
 from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
-from typing import Any, NewType
+from typing import Any
+
+from spell.types import CommentType, Text
 
 # EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
 EXAMPLE_DIR = Path.cwd().parent / "tests" / "data" / "file1.py"
-
-
-Comment = NewType("Comment", str)
-Docstring = NewType("Docstring", str)
-
-
-class Type(Enum):
-    """Type of comments in a python file"""
-
-    #: Inline comments starts with '#'
-    INLINE = "INLINE"
-
-    #: Docstring of module, class, or function
-    DOCSTRING = "DOCSTRING"
-
-
-class CommentType(Enum):
-
-    INLINE = "inline"
-
-    CLASS = "class"
-
-    MODULE = "module"
-
-    FUNCTION = "function"
 
 
 @dataclass
 class BaseComment:
     comment: str | None
     line_no: int
+    ignore: bool = False
     _type: CommentType = CommentType.INLINE
 
     def clean(self, strip_hash: bool = False) -> "BaseComment":
@@ -48,15 +25,21 @@ class BaseComment:
         _comment: str = self.comment.strip()
         if strip_hash:
             _comment = _comment.strip("#").strip()
-
         return BaseComment(comment=_comment, line_no=self.line_no)
-
-    def remove_symbols(self) -> "BaseComment":
-        raise NotImplementedError("Not implemented")
 
     def is_code(self) -> bool:
         """Returns True if commented line is python code"""
-        raise NotImplementedError("Not implemented")
+        assert self.comment is not None
+        try:
+            ast.parse(self.comment)
+        except SyntaxError:
+            return False
+        return True
+
+    @property
+    def text(self) -> Text:
+        assert self.comment is not None
+        return Text(self.comment)
 
 
 @dataclass
@@ -74,8 +57,13 @@ class BaseDocstring:
     _type: CommentType
     # TODO: Add identifier to identify where docstring came from i.e. Enum.Module, Enum.Function etc.
 
+    @property
+    def text(self) -> Text:
+        assert self.docstring is not None
+        return Text(self.docstring)
 
-class FileParser:
+
+class Parser:
     def __init__(self, file: Path):
         self._file = file
 
@@ -162,7 +150,7 @@ class FileParser:
 
 
 def main() -> None:
-    parser = FileParser(EXAMPLE_DIR)
+    parser = Parser(EXAMPLE_DIR)
     parser.parse()
     ds = parser.find_docstrings(verbose=True)
     for d in ds:

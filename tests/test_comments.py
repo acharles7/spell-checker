@@ -1,13 +1,14 @@
 from pathlib import Path
 from unittest import TestCase
 
-from spell.parser import BaseComment, BaseDocstring, CommentType, DocstringMetadata, FileParser
+from spell.parser import BaseComment, BaseDocstring, DocstringMetadata, Parser
+from spell.types import CommentType
 
 
 class TestInlineComments(TestCase):
 
     file = Path(__file__).parent / "data" / "file1.py"
-    parser = FileParser(file)
+    parser = Parser(file)
     parser.parse()
 
     actual_comments = parser.find_inline_comments()
@@ -43,7 +44,7 @@ class TestInlineComments(TestCase):
 class TestDocstrings(TestCase):
 
     file = Path(__file__).parent / "data" / "file1.py"
-    parser = FileParser(file)
+    parser = Parser(file)
     parser.parse()
 
     actual_docstrings = parser.find_docstrings()

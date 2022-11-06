@@ -3,8 +3,9 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+from spell.checker import Checker
 from spell.config import Config
-from spell.parser import FileParser
+from spell.parser import Parser
 from spell.walker import Walker
 
 
@@ -35,19 +36,29 @@ def main() -> None:
     paths = walker.walk()
     print(paths)
 
+    texts = []
     for path in paths:
         print(f"{path.name} : {'+' * 180}")
-        file_parser = FileParser(path)
+        file_parser = Parser(path)
         file_parser.parse()
 
         doc_strs = file_parser.find_docstrings(verbose=False)
         comments = file_parser.find_inline_comments()
 
         for c in comments:
-            print(c.clean(strip_hash=True))
+            cleaned_c = c.clean(strip_hash=True)
+            if cleaned_c.is_code():
+                print("code found, skipping", cleaned_c.text)
+                continue
+            texts.append(cleaned_c.text)
 
         for d in doc_strs:
-            print(d)
+            texts.append(d.text)
+
+    for text in texts:
+        checker = Checker(text)
+        checker.check()
+        break
 
 
 if __name__ == "__main__":
