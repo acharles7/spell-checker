@@ -8,6 +8,8 @@ description = "A typo checker in docstrings and inline comments"
 readme = "README.md"
 requires-python = ">=3.10"
 
+dependencies = ["textblob==0.17.1"]
+
 [project.optional-dependencies]
 dev = [
     "bandit==1.7.4",

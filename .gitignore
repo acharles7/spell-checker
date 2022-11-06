@@ -19,12 +19,10 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
-MANIFEST
 .idea/
 
-# pyenv
+# Pyenv
 .python-version
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
