@@ -56,9 +56,10 @@ def main() -> None:
             texts.append(d.text)
 
     for text in texts:
-        checker = Checker(text)
-        checker.check()
-        break
+        print(text)
+        # print(text.remove_symbols())
+        checker = Checker(text.remove_symbols())
+        checker.check(verbose=False)
 
 
 if __name__ == "__main__":
