@@ -18,6 +18,7 @@ class Config:
     include: list[Path] | None = None
     exclude: list[Path] | None = None
     supported_extensions: list[str] = field(default_factory=list)
+    suggestions: int = 2
 
     @classmethod
     def from_argparser(cls: Type[_T], parser: ArgumentParser) -> _T:

@@ -25,6 +25,12 @@ dev = [
 [project.scripts]
 spell = "spell.main:main"
 
+[tool.setuptools]
+packages = ["spell", "assets"]
+
+[tool.setuptools.package-data]
+assets = ["common", "latin_abbrev", "std_lib_names", "tech_words"]
+
 [tool.black]
 line-length = 110
 target_version = ["py310"]

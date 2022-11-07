@@ -1,9 +1,23 @@
+import string
+from dataclasses import dataclass
 from enum import Enum
 from typing import NewType, Protocol
 
 Comment = NewType("Comment", str)
 Docstring = NewType("Docstring", str)
-Text = NewType("Text", str)
+
+
+@dataclass
+class Text(str):
+
+    text: str
+
+    def remove_symbols(self) -> "Text":
+        """Remove punctuations from the given text"""
+        s = self.text
+        for char in string.punctuation:
+            s = s.replace(char, " ")
+        return Text(s)
 
 
 class Ignore(Enum):
