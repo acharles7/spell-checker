@@ -7,8 +7,7 @@ from typing import Any
 
 from spell.types import CommentType, Text
 
-# EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
-EXAMPLE_DIR = Path.cwd().parent / "tests" / "data" / "file1.py"
+EXAMPLE_DIR = Path.cwd().parent / "examples" / "1.py"
 
 
 @dataclass
